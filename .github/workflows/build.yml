@@ -12,7 +12,15 @@ jobs:
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v4
         with: { gradle-version: "8.9" }
-      - run: gradle :app:assembleDebug --no-daemon --console=plain
+      - name: Build
+        run: |
+          set +e
+          gradle :app:assembleDebug --no-daemon --console=plain > build.log 2>&1
+          code=$?
+          if [ $code -ne 0 ]; then
+            grep -E "^e: |error:|What went wrong|Could not|FAILED" -A2 build.log | head -40 | while IFS= read -r l; do echo "::error::${l:0:400}"; done
+          fi
+          exit $code
       - uses: actions/upload-artifact@v4
         with:
           name: MyWallet-debug-apk
