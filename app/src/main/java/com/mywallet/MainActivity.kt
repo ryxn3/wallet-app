@@ -164,17 +164,27 @@ fun CardList(
                 Text("Your wallet is empty.\nTap \"Add card\" to create your first card.",
                     color = Color.Gray, textAlign = TextAlign.Center)
             }
-        } else LazyColumn(
-            Modifier.padding(pad), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
-            verticalArrangement = Arrangement.spacedBy(if (stacked) 0.dp else 16.dp),
-        ) {
-            itemsIndexed(cards, key = { _, c -> c.id }) { i, card ->
-                val overlap = stacked && i != cards.lastIndex
-                val m = if (overlap) Modifier.layout { measurable, constraints ->
-                    val p = measurable.measure(constraints)
-                    layout(p.width, (p.height * 0.28f).toInt()) { p.place(0, 0) }
-                } else Modifier
-                CardView(card, m.clickable { onOpen(card) })
+        } else {
+            // Apple-Wallet style: a tight stack that opens when tapped, then scrolls.
+            var expanded by remember { mutableStateOf(false) }
+            val useStack = stacked && !expanded
+            BackHandler(expanded) { expanded = false }
+            val frac by androidx.compose.animation.core.animateFloatAsState(
+                when { !stacked -> 1f; expanded -> 0.3f; else -> 0.13f }, label = "overlap")
+            val shown = if (useStack) cards.take(6) else cards
+            LazyColumn(
+                Modifier.padding(pad), userScrollEnabled = !useStack,
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
+                verticalArrangement = Arrangement.spacedBy(if (stacked) 0.dp else 16.dp),
+            ) {
+                itemsIndexed(shown, key = { _, c -> c.id }) { i, card ->
+                    val overlap = stacked && i != shown.lastIndex
+                    val m = if (overlap) Modifier.layout { measurable, constraints ->
+                        val p = measurable.measure(constraints)
+                        layout(p.width, (p.height * frac).toInt()) { p.place(0, 0) }
+                    } else Modifier
+                    CardView(card, m.clickable { if (useStack) expanded = true else onOpen(card) })
+                }
             }
         }
     }
@@ -372,6 +382,17 @@ fun Editor(initial: WalletCard, onCancel: () -> Unit, onSave: (WalletCard) -> Un
                         ) { Canvas(Modifier.matchParentSize()) { drawPattern(p.pattern, if (p.dark) Color.Black.copy(alpha = 0.07f) else Color.White.copy(alpha = 0.13f)) } }
                         Text(p.name, fontSize = 11.sp)
                     }
+                }
+            }
+
+            Text("Store names (name and colors only, no logos)", fontWeight = FontWeight.Medium)
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(STORES) { p ->
+                    AssistChip(
+                        onClick = { c = c.copy(name = p.name, colorA = p.a, colorB = p.b, darkText = p.dark, pattern = p.pattern, image = null) },
+                        label = { Text(p.name) },
+                        leadingIcon = { Box(Modifier.size(14.dp).clip(CircleShape).background(Color(p.a))) },
+                    )
                 }
             }
 

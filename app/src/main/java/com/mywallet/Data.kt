@@ -56,6 +56,29 @@ val PRESETS = listOf(
     Preset("Chocolate", 0xFF3E2723, 0xFF8D6E63, false, 1),
 )
 
+/** Store-card templates: the store's name and rough colors only, no logos. */
+val STORES = listOf(
+    Preset("IKEA", 0xFF0058A3, 0xFF003E73, false, 0),
+    Preset("Lidl", 0xFF0050AA, 0xFF00357A, false, 1),
+    Preset("Aldi", 0xFF00005F, 0xFF0B3C8C, false, 2),
+    Preset("Tesco", 0xFF00539F, 0xFFEE1C2E, false, 0),
+    Preset("Carrefour", 0xFF004E9F, 0xFFE30613, false, 0),
+    Preset("Costco", 0xFFE31837, 0xFF005DAA, false, 0),
+    Preset("Target", 0xFFCC0000, 0xFF8B0000, false, 1),
+    Preset("Walmart", 0xFF0071CE, 0xFF004C91, false, 5),
+    Preset("Best Buy", 0xFF0046BE, 0xFF002F82, false, 4),
+    Preset("CVS", 0xFFCC0000, 0xFF7A0000, false, 0),
+    Preset("Starbucks", 0xFF00704A, 0xFF1E3932, false, 1),
+    Preset("McDonald's", 0xFFDA291C, 0xFFB71C1C, false, 0),
+    Preset("Subway", 0xFF009743, 0xFF006B2E, false, 2),
+    Preset("Sephora", 0xFF000000, 0xFF333333, false, 4),
+    Preset("H&M", 0xFFE50010, 0xFF9B000B, false, 0),
+    Preset("Nike", 0xFF111111, 0xFF444444, false, 3),
+    Preset("Decathlon", 0xFF0082C3, 0xFF005A87, false, 3),
+    Preset("Spotify", 0xFF1DB954, 0xFF121212, false, 5),
+    Preset("Netflix", 0xFFE50914, 0xFF141414, false, 0),
+)
+
 enum class SortMode(val label: String) {
     FAVORITES("Favorites first"), NEWEST("Newest"), OLDEST("Oldest"),
     NAME_AZ("Name A to Z"), NAME_ZA("Name Z to A"), RECENT("Recently used"),
